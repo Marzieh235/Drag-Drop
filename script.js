@@ -21,15 +21,17 @@ new draggable({
     list: data,
     template: (item) => {
         return `
-        <div class="list-item" id="${item.id}">
-        <div class="list-item-head">
-            <span class="head-id">${item.id}</span>
-        </div>
-        <div class="list-item-content">
-            <span class="item-title">${item.title}</span>
-            <p>${item.text}</p>
-        </div>
-    </div>
+        
+            <div class="list-item" id="${item.id}">
+                <div class="list-item_head">
+                    <span class="head-id">${item.id}</span>
+                </div>
+                <div class="list-item_content">
+                    <span class="item-title">${item.title}</span>
+                    <p>${item.text}</p>
+                </div>
+            </div>
+        
         `
 
 
