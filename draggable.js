@@ -1,66 +1,75 @@
 class draggable {
-    constructor(options) {
-        this.setuplist(options);
+    dragSrcEl;
 
-        for (let listItem of options.el.children) {
+    constructor(options) {
+        this.setupList(options);
+
+        for(let listItem of options.el.children) {
             this.addDnDHandlers(listItem)
         }
     }
 
 
+    setupList(options) {
+        let {list , el : element , template } = options;
 
-    setuplist(options) {
-        let { list, el: element, template } = options;
-
-
-        if (!element) throw Error('the list is not exist');
-        if (!list) throw Error('the item is not exist');
-        if (!Array.isArray(list)) throw Error('please insert correct array')
-        if (!template) throw Error('please add a template function')
-        if (typeof template !== "function") throw Error('please add a function as template')
-
+        if(! element ) throw Error('the list is not exists');
+        if(! list ) throw Error('the data is not exists')
+        if(! Array.isArray(list)) throw Error('the list is not an array, please insert an array')
+        if(! template) throw Error('please add a Tempalte function')
+        if(typeof template !== "function") throw Error('please add a function as template') 
 
         list.forEach(item => element.innerHTML += template(item))
     }
 
-
     addDnDHandlers(element) {
-        element.setattributes('draggable', true);
+        element.setAttribute('draggable' , true);
 
-
-        element.addEventlistener('dragstart' , this.handlerdragstart)
-        element.addEventlistener('dragenter' , this.handlerdragenter)
-        element.addEventlistener('dragover' , this.handlerdragover)
-        element.addEventlistener('dragleave' , this.handlerdragleave)
-        element.addEventlistener('drop' , this.handlerdrop)
-        element.addEventlistener('dragend' , this.handlerdragend)
+        element.addEventListener('dragstart' , this.handleDragStart.bind(this))
+        element.addEventListener('drageneter' , this.handleDragEneter.bind(this))
+        element.addEventListener('dragover' , this.handleDragOver.bind(this))
+        element.addEventListener('dragleave' , this.handleDragLeave.bind(this))
+        element.addEventListener('drop' , this.handleDragDrop.bind(this))
+        element.addEventListener('dragend' , this.handleDragEnd.bind(this))
     }
 
+    handleDragStart(e) {
+        this.dragSrcEl = e.target;
 
-    handlerdragstart(e){
+        e.dataTransfer.setData('text/html' , e.target.outerHTML)
 
+        e.target.classList.add('dragElem')
     }
 
-    handlerdragenter(e){
-
+    handleDragEneter(e) {
     }
 
-    handlerdragover(e){
+    handleDragOver(e) {
+        if(e.preventDefault) e.preventDefault();
 
-    }
-
-    handlerdragleave(e){
-
-    }
-
-    handlerdrop(e){
+        e.target.classList.add('over');
 
     }
 
-    handlerdragend(e){
+    handleDragLeave(e) {
+        e.target.classList.remove('over');
+    }
+
+    handleDragDrop(e) {
+        let target = e.target.closest('.list-item');
+
+       if(this.dragSrcEl != target) {
+            target.parentNode.removeChild(this.dragSrcEl);
+            let dropHTML = e.dataTransfer.getData('text/html');
+            target.insertAdjacentHTML('beforebegin' , dropHTML);
+            this.addDnDHandlers(target.previousSibling)
+       }
+       e.target.classList.remove('over');
 
     }
-    
+
+    handleDragEnd(e) {
+        
+        e.target.classList.remove('dragElem');
+    }
 }
-
-
